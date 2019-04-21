@@ -1,14 +1,31 @@
 <html>
    <head>
      <title> File Upload </title>
+     <!---
+     <script>
+         function loadFile() {
+         var output = document.getElementById('output');
+         var imgId = document.getElementById('img')
+         output.src = URL.createObjectURL(imgId.files[0]);
+       };
+     </script>
+     --->
    </head>
 
    <body>
       <h1> Automatically deployed! </h1>
-      <form action = "/img" method = "POST"
-         enctype = "multipart/form-data">
-         <input type = "file" name="file" accept="image/*">
-         <input type = "submit"/>
+      {% if error %}
+         <p><strong>Error:</strong> {{ error }}
+      {% endif %}
+      <form action = "/img" method = "POST" enctype = "multipart/form-data">
+         <input type = "file" name="file" id= "img" accept="image/*">
+         <input type="submit">
       </form>
+
+<!--         <input type = "file" name="file" id= "img" accept="image/*">
+         <button onclick="loadFile()">Submit</button>
+         <img id="output"/>
+         <button onclick="loadFile()">Submit</button>
+-->
    </body>
 </html>

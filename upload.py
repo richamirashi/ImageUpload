@@ -1,9 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file, abort
+from io import StringIO, BytesIO
 from werkzeug import secure_filename
-import os
-UPLOAD_FOLDER = 'static/images'
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def upload():
@@ -11,11 +9,29 @@ def upload():
 
 @app.route('/img', methods = ['GET', 'POST'])
 def upload_image():
+   error = None
+   if request.method == 'GET':
+       abort(405)
    if request.method == 'POST':
       image = request.files['file']
       image_name = secure_filename(image.filename)
-      image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
-      return render_template("view.html", uploaded_image = image_name)
+      if image_name == '':
+          error = 'The file is not chosen. Please select an image to upload.'
+          return render_template('index.html', error = error)
+      # Reads and returns data in bytes
+      data = image.read()
+      strIO = BytesIO()
+      strIO.write(data)
+      strIO.seek(0)
+      return send_file(strIO, attachment_filename=image_name, as_attachment=False)
+
+      """
+      data = image.read()
+      strIO = StringIO.StringIO()
+      strIO.write(data)
+      strIO.seek(0)
+      return send_file(strIO, attachment_filename=image_name, as_attachment=False)
+      """
 
 if __name__ == '__main__':
    app.run(debug = True)
