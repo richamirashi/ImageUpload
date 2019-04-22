@@ -17,21 +17,14 @@ def upload_image():
       image_name = secure_filename(image.filename)
       if image_name == '':
           error = 'The file is not chosen. Please select an image to upload.'
-          return render_template('index.html', error = error)
-      # Reads and returns data in bytes
+          return render_template('index.html', error = error), 400
+      # Reads and returns the binary data-stream
       data = image.read()
+      # BytesIO object is created
       strIO = BytesIO()
       strIO.write(data)
       strIO.seek(0)
       return send_file(strIO, attachment_filename=image_name, as_attachment=False)
-
-      """
-      data = image.read()
-      strIO = StringIO.StringIO()
-      strIO.write(data)
-      strIO.seek(0)
-      return send_file(strIO, attachment_filename=image_name, as_attachment=False)
-      """
 
 if __name__ == '__main__':
    app.run(debug = True)
